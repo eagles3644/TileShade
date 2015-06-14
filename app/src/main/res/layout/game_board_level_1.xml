@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/board_1"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content">
+    
+    <Button
+        android:id="@+id/level_1_1"
+        android:layout_width="@dimen/level_1"
+        android:layout_height="@dimen/level_1"
+        android:layout_margin="@dimen/game_shape_spacing"/>
+
+    <Button
+        android:id="@+id/level_1_2"
+        android:layout_width="@dimen/level_1"
+        android:layout_height="@dimen/level_1"
+        android:layout_margin="@dimen/game_shape_spacing"
+        android:layout_toRightOf="@id/level_1_1"
+        android:layout_toEndOf="@id/level_1_1"/>
+
+    <Button
+        android:id="@+id/level_1_3"
+        android:layout_width="@dimen/level_1"
+        android:layout_height="@dimen/level_1"
+        android:layout_margin="@dimen/game_shape_spacing"
+        android:layout_below="@id/level_1_1"/>
+
+    <Button
+        android:id="@+id/level_1_4"
+        android:layout_width="@dimen/level_1"
+        android:layout_height="@dimen/level_1"
+        android:layout_margin="@dimen/game_shape_spacing"
+        android:layout_below="@id/level_1_2"
+        android:layout_toRightOf="@id/level_1_3"
+        android:layout_toEndOf="@id/level_1_3"/>
+    
+</RelativeLayout>
