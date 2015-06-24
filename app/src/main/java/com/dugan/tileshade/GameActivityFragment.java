@@ -22,16 +22,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivityFragment extends Fragment {
 
-    private int score = -1;
+    private int score = 0;
     private int time = 0;
-    private int countDown = 4;
+    private int countDown = 3;
     private int level = 0;
     private int round = 0;
     private String shape;
@@ -353,7 +352,6 @@ public class GameActivityFragment extends Fragment {
         RelativeLayout oldGameLayout = null;
 
         //increase score
-        score = score + 1;
         round = round + 1;
 
         //inflate dynamic layout
@@ -572,11 +570,12 @@ public class GameActivityFragment extends Fragment {
         return rand.nextInt(gamePieces - min + 1) + 1;
     }
 
-    private View.OnClickListener createClickListener(){
+    private Button.OnClickListener createClickListener(){
         //create click listener
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                score = score + 1;
                 setupGamePieces(inflater, container);
             }
         };

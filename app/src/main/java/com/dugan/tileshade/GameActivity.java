@@ -1,13 +1,16 @@
 package com.dugan.tileshade;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
+
+    private boolean backPressedToExitOnce = false;
+    private Toast toast = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +42,49 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Quit");
-        builder.setMessage("Are you sure you want to quit the game?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+    protected void onPause() {
+        killToast();
+        super.onPause();
+    }
 
-            }
-        });
-        builder.show();
+    @Override
+    public void onBackPressed(){
+        if (backPressedToExitOnce) {
+            super.onBackPressed();
+        } else {
+            this.backPressedToExitOnce = true;
+            showToast("Press again to quit.");
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    backPressedToExitOnce = false;
+                }
+            }, 2000);
+        }
+    }
+
+    private void showToast(String message) {
+        if (this.toast == null) {
+            // Create toast if found null, it would he the case of first call only
+            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+
+        } else if (this.toast.getView() == null) {
+            // Toast not showing, so create new one
+            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+
+        } else {
+            // Updating toast message is showing
+            this.toast.setText(message);
+        }
+
+        // Showing toast finally
+        this.toast.show();
+    }
+
+    private void killToast() {
+        if (this.toast != null) {
+            this.toast.cancel();
+        }
     }
 }

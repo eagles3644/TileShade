@@ -4,10 +4,10 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="mode_button_height">60dp</dimen>
     <dimen name="mode_button_width">180dp</dimen>
-    <dimen name="mode_button_margin_bottom">20dp</dimen>
-    <dimen name="icon_spotit_margin_bottom">20dp</dimen>
-    <dimen name="icon_spotit_height">120dp</dimen>
-    <dimen name="icon_spotit_width">120dp</dimen>
+    <dimen name="mode_button_margin_bottom">10dp</dimen>
+    <dimen name="icon_spotit_margin_bottom">0dp</dimen>
+    <dimen name="icon_spotit_height">180dp</dimen>
+    <dimen name="icon_spotit_width">180dp</dimen>
     <dimen name="text_spotit_margin_bottom">10dp</dimen>
     <dimen name="text_spotit_text_size">40sp</dimen>
     <dimen name="game_shape_spacing">2dp</dimen>

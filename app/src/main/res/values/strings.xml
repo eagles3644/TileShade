@@ -28,4 +28,8 @@
     <string name="go">Go!</string>
     <string name="quit">Quit</string>
     <string name="tile_shade">Tile Shade</string>
+    <string name="settings">Settings</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="title_activity_leaderboard">Leaderboard</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

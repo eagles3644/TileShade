@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,31 +49,15 @@ public class MainActivityFragment extends Fragment {
         //inflate fragment
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //create click listener
-        View.OnClickListener clickListener = new View.OnClickListener() {
+        //get mode buttons
+        Button btnPlay = (Button) rootView.findViewById(R.id.btn_play);
+        Button btnLeaderboard = (Button) rootView.findViewById(R.id.btn_leaderboard);
+        Button btnSettings = (Button) rootView.findViewById(R.id.btn_settings);
+
+        //set mode button onclick listeners
+        btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //initialize local vars
-                String mode;
-                int id = v.getId();
-
-                //set mode variable equal to button clicked
-                switch (id){
-                    case R.id.btn_mode_standard:
-                        mode = Constants.PREF_MODE_STANDARD;
-                        break;
-                    case R.id.btn_mode_advanced:
-                        mode = Constants.PREF_MODE_ADVANCED;
-                        break;
-                    case R.id.btn_mode_expert:
-                        mode = Constants.PREF_MODE_EXPERT;
-                        break;
-                    default:
-                        mode = Constants.PREF_MODE_DEFAULT;
-                        break;
-                }
-
                 //shared prefs
                 SharedPreferences prefs = PreferenceManager
                         .getDefaultSharedPreferences(rootView.getContext());
@@ -83,7 +66,7 @@ public class MainActivityFragment extends Fragment {
                 Intent intent = new Intent(v.getContext(), GameActivity.class);
 
                 //intent set mode extra
-                intent.putExtra(Constants.PREF_MODE, mode);
+                intent.putExtra(Constants.PREF_MODE, prefs.getString(Constants.PREF_MODE, Constants.PREF_MODE_DEFAULT));
 
                 //intent set shape extra
                 intent.putExtra(Constants.PREF_SHAPE,
@@ -93,25 +76,34 @@ public class MainActivityFragment extends Fragment {
                 intent.putExtra(Constants.PREF_SECONDS,
                         prefs.getInt(Constants.PREF_SECONDS, Constants.PREF_SECONDS_DEFAULT));
 
-                //log mode
-                Log.i("SelectedMode", mode);
-
                 //start game activity
                 startActivity(intent);
             }
-        };
+        });
 
-        //get mode buttons
-        Button modeStandard = (Button) rootView.findViewById(R.id.btn_mode_standard);
-        Button modeAdvanced = (Button) rootView.findViewById(R.id.btn_mode_advanced);
-        Button modeExpert = (Button) rootView.findViewById(R.id.btn_mode_expert);
+        btnLeaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //create intent
+                Intent intent = new Intent(v.getContext(), LeaderboardActivity.class);
 
-        //set mode button onclick listeners
-        modeStandard.setOnClickListener(clickListener);
-        modeAdvanced.setOnClickListener(clickListener);
-        modeExpert.setOnClickListener(clickListener);
+                //start activity
+                startActivity(intent);
+            }
+        });
 
-        //return rootview
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //create intent
+                Intent intent = new Intent(v.getContext(), SettingsActivity.class);
+
+                //start activity
+                startActivity(intent);
+            }
+        });
+
+        //return rootView
         return rootView;
     }
 }

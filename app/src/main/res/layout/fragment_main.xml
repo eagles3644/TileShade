@@ -28,7 +28,7 @@
         android:layout_margin="@dimen/instructions_margins"/>
 
     <Button
-        android:id="@+id/btn_mode_standard"
+        android:id="@+id/btn_play"
         android:layout_width="@dimen/mode_button_width"
         android:layout_height="@dimen/mode_button_height"
         android:layout_marginBottom="@dimen/mode_button_margin_bottom"
@@ -39,26 +39,24 @@
         android:textSize="@dimen/mode_button_text_size"/>
 
     <Button
-        android:id="@+id/btn_mode_advanced"
+        android:id="@+id/btn_leaderboard"
         android:layout_width="@dimen/mode_button_width"
         android:layout_height="@dimen/mode_button_height"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/mode_button_margin_bottom"
-        android:layout_below="@id/btn_mode_standard"
-        android:text="@string/mode_advanced"
+        android:layout_below="@id/btn_play"
+        android:text="@string/leaderboard"
         android:textStyle="bold"
-        android:textSize="@dimen/mode_button_text_size"
-        android:visibility="gone"/>
+        android:textSize="@dimen/mode_button_text_size"/>
 
     <Button
-        android:id="@+id/btn_mode_expert"
+        android:id="@+id/btn_settings"
         android:layout_width="@dimen/mode_button_width"
         android:layout_height="@dimen/mode_button_height"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/btn_mode_advanced"
-        android:text="@string/mode_expert"
+        android:layout_below="@id/btn_leaderboard"
+        android:text="@string/settings"
         android:textStyle="bold"
-        android:textSize="@dimen/mode_button_text_size"
-        android:visibility="gone"/>
+        android:textSize="@dimen/mode_button_text_size"/>
 
 </RelativeLayout>
