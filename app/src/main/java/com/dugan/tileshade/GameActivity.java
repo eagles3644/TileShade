@@ -1,6 +1,8 @@
 package com.dugan.tileshade;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,9 +40,7 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        //FragmentManager fragmentManager = getFragmentManager();
-        //fragmentManager.popBackStack();
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Quit");
         builder.setMessage("Are you sure you want to quit the game?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -55,6 +55,6 @@ public class GameActivity extends AppCompatActivity {
 
             }
         });
-        builder.show();*/
+        builder.show();
     }
 }

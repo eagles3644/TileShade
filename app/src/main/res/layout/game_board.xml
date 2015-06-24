@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/board"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="fill_parent"
+    android:id="@+id/board">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
             android:layout_width="@dimen/mode_button_width"
             android:layout_height="@dimen/mode_button_height"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/mode_button_margin_bottom"
+            android:layout_marginBottom="@dimen/game_btn_margin"
             android:text="@string/pause"
             android:textStyle="bold"
             android:textSize="@dimen/mode_button_text_size"/>
@@ -28,8 +28,19 @@
             android:layout_height="@dimen/mode_button_height"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/game_pause"
-            android:layout_marginBottom="@dimen/mode_button_margin_bottom"
+            android:layout_marginBottom="@dimen/game_btn_margin"
             android:text="@string/start_over"
+            android:textStyle="bold"
+            android:textSize="@dimen/mode_button_text_size"/>
+
+        <Button
+            android:id="@+id/game_quit"
+            android:layout_width="@dimen/mode_button_width"
+            android:layout_height="@dimen/mode_button_height"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/game_reset"
+            android:layout_marginBottom="@dimen/game_btn_margin"
+            android:text="@string/quit"
             android:textStyle="bold"
             android:textSize="@dimen/mode_button_text_size"/>
 

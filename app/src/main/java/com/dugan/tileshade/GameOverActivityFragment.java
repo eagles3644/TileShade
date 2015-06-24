@@ -1,10 +1,12 @@
 package com.dugan.tileshade;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,15 @@ import android.widget.TextView;
 
 public class GameOverActivityFragment extends Fragment {
 
+    private AppCompatActivity activity;
+
     public GameOverActivityFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (AppCompatActivity) activity;
     }
 
     @Override

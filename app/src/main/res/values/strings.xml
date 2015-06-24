@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpotIt</string>
+    <string name="app_name">Tile Shade</string>
     <string name="mode_standard">Play Standard Mode!</string>
     <string name="mode_advanced">Play Advanced Mode!</string>
     <string name="mode_expert">Play Expert Mode!</string>
@@ -26,4 +26,6 @@
     <string name="two">2</string>
     <string name="one">1</string>
     <string name="go">Go!</string>
+    <string name="quit">Quit</string>
+    <string name="tile_shade">Tile Shade</string>
 </resources>

@@ -163,14 +163,14 @@ public final class Constants {
     public static final int LEVEL_9_MIN = 26;
     public static final int LEVEL_9_MAX = 9999;
 
-    public static final float OPACITY_1 = 1.35f;
-    public static final float OPACITY_2 = 1.25f;
-    public static final float OPACITY_3 = 1.15f;
+    public static final float OPACITY_1 = 1.75f;
+    public static final float OPACITY_2 = 1.50f;
+    public static final float OPACITY_3 = 1.25f;
     public static final float OPACITY_4 = 1.10f;
-    public static final float OPACITY_5 = .65f;
-    public static final float OPACITY_6 = .75f;
-    public static final float OPACITY_7 = .80f;
-    public static final float OPACITY_8 = .85f;
+    public static final float OPACITY_5 = .25f;
+    public static final float OPACITY_6 = .50f;
+    public static final float OPACITY_7 = .75f;
+    public static final float OPACITY_8 = .90f;
 
     //throw error if constructor is ever accessed
     private Constants(){

@@ -32,4 +32,5 @@
     <dimen name="game_over_text_size">40sp</dimen>
     <dimen name="final_score_text_size">40sp</dimen>
     <dimen name="final_score_spacing">14dp</dimen>
+    <dimen name="game_btn_margin">10dp</dimen>
 </resources>

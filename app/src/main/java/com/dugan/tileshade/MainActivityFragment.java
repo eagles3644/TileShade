@@ -1,43 +1,54 @@
 package com.dugan.tileshade;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 public class MainActivityFragment extends Fragment {
 
+    private AppCompatActivity activity;
+
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (AppCompatActivity) activity;
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //get activity action bar
+        ActionBar actionBar = activity.getSupportActionBar();
+
+        //Inflate custom action bar
+        @SuppressLint("InflateParams") View customActionBarView = inflater.inflate(R.layout.main_action_bar, null);
+
+        //set action bar settings
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        //set custom view
+        actionBar.setCustomView(customActionBarView);
+
         //inflate fragment
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        //create shader for gradient text
-        Shader gradTextShader = new LinearGradient(0,0,0,160,
-                Color.parseColor(Constants.COLOR_GRAD_START),
-                Color.parseColor(Constants.COLOR_GRAD_END),
-                Shader.TileMode.CLAMP);
-
-        //get main textview to be painted
-        TextView mainText = (TextView) rootView.findViewById(R.id.main_text);
-
-        //apply paint to main textview via gradient shader
-        mainText.getPaint().setShader(gradTextShader);
 
         //create click listener
         View.OnClickListener clickListener = new View.OnClickListener() {

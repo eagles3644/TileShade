@@ -1,24 +1,28 @@
 package com.dugan.tileshade;
 
-import android.animation.StateListAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,8 +41,18 @@ public class GameActivityFragment extends Fragment {
     private ViewGroup container;
     private GameCountdownTimer gameCountdownTimer;
     private GameStartTimer gameStartTimer;
+    private AppCompatActivity activity;
+    private Boolean gameTimerRunning = false;
+    private Boolean gamePaused = false;
+    private Boolean gameComplete = false;
 
     public GameActivityFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (AppCompatActivity) activity;
     }
 
     @Override
@@ -55,17 +69,37 @@ public class GameActivityFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_game, container, false);
 
         //get mode from intent
-        mode = getActivity().getIntent().getStringExtra(Constants.PREF_MODE);
+        mode = activity.getIntent().getStringExtra(Constants.PREF_MODE);
 
         //get shape from intent
-        shape = getActivity().getIntent().getStringExtra(Constants.PREF_SHAPE);
+        shape = activity.getIntent().getStringExtra(Constants.PREF_SHAPE);
 
         //set time variable
-        time = getActivity().getIntent().getIntExtra(Constants.PREF_SECONDS,
+        time = activity.getIntent().getIntExtra(Constants.PREF_SECONDS,
                 Constants.PREF_SECONDS_DEFAULT);
 
         //get activity action bar
-        ActionBar actionBar = ((GameActivity)getActivity()).getSupportActionBar();
+        ActionBar actionBar = activity.getSupportActionBar();
+
+        //create custom action bar view
+        @SuppressLint("InflateParams") View customActionBarView = inflater.inflate(R.layout.score_board, null);
+
+        //get action bar text views
+        TextView timeText = (TextView) customActionBarView.findViewById(R.id.time);
+        TextView scoreText = (TextView) customActionBarView.findViewById(R.id.score);
+
+        //set action bar text
+        timeText.setText(Integer.toString(time));
+        scoreText.setText(Integer.toString(0));
+
+        //set action bar settings
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        //set custom view
+        actionBar.setCustomView(customActionBarView);
 
         //get fragment layout
         fragmentLayout = (RelativeLayout) rootView.findViewById(R.id.game_frag);
@@ -77,25 +111,23 @@ public class GameActivityFragment extends Fragment {
     }
 
     @Override
-    public void onStop(){
-        super.onStop();
-        cancelTimer();
-    }
-
-    @Override
     public void onPause(){
         super.onPause();
         cancelTimer();
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        gameCountdownTimer = new GameCountdownTimer(time*2000, 2000);
+        if(gameTimerRunning) {
+            creatPauseView(fragmentLayout.getContext(), (RelativeLayout) fragmentLayout.getChildAt(0));
+        } else if(!gamePaused && !gameComplete) {
+            getActivity().finish();
+        }
     }
 
     public void cancelTimer(){
-        gameCountdownTimer.cancel();
+        if(gameStartTimer != null){
+            gameStartTimer.cancel();
+        }
+        if(gameCountdownTimer != null){
+            gameCountdownTimer.cancel();
+        }
     }
 
     public class GameStartTimer extends  CountDownTimer {
@@ -119,8 +151,8 @@ public class GameActivityFragment extends Fragment {
             //remove game board
             fragmentLayout.removeView(oldGameLayout);
 
-            View gameOverInflatorView = null;
-            RelativeLayout gameCountDown =  null;
+            View gameOverInflatorView;
+            RelativeLayout gameCountDown;
 
             //inflate appropriate game view
             switch (countDown){
@@ -141,8 +173,6 @@ public class GameActivityFragment extends Fragment {
                     gameCountDown =  (RelativeLayout) gameOverInflatorView.findViewById(R.id.game_count_view_3);
                     break;
             }
-
-            Log.e("GameStartTimer", "" + ((int) millisUntilFinished));
 
             //create game board layout specs
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -171,22 +201,6 @@ public class GameActivityFragment extends Fragment {
             //remove game board
             fragmentLayout.removeView(oldGameLayout);
 
-            View gameOverInflatorView = inflater.inflate(R.layout.game_go, container, false);
-
-            RelativeLayout gameCountDown =  (RelativeLayout) gameOverInflatorView.findViewById(R.id.game_count_view_go);
-
-            //create game board layout specs
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            //add layout rules
-            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-
-            //add board level layout to fragment layout
-            fragmentLayout.addView(gameCountDown, layoutParams);
-
             //setup game
             setupGamePieces(inflater, container);
 
@@ -204,6 +218,8 @@ public class GameActivityFragment extends Fragment {
 
         @Override
         public void onTick(long millisUntilFinished) {
+            gameTimerRunning = true;
+
             time = time - 1;
 
             //get activity action bar
@@ -236,6 +252,8 @@ public class GameActivityFragment extends Fragment {
 
         @Override
         public void onFinish() {
+            gameTimerRunning = false;
+
             time = time - 1;
 
             //get activity action bar
@@ -320,13 +338,14 @@ public class GameActivityFragment extends Fragment {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
+                    gameComplete = true;
                     startActivity(intent);
                 }
             }, 1000);
         }
     }
 
-    private void setupGamePieces(LayoutInflater inflater,
+    private void setupGamePieces(final LayoutInflater inflater,
                                  ViewGroup container){
         //local vars
         int gamePieces;
@@ -470,12 +489,15 @@ public class GameActivityFragment extends Fragment {
         //get buttons
         Button btnPause = (Button) gameLayout.findViewById(R.id.game_pause);
         Button btnReset = (Button) gameLayout.findViewById(R.id.game_reset);
+        Button btnQuit  = (Button) gameLayout.findViewById(R.id.game_quit);
 
         //set pause button click action
+        final RelativeLayout finalGameLayout = gameLayout;
         btnPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameCountdownTimer.cancel();
+                cancelTimer();
+                creatPauseView(v.getContext(), finalGameLayout);
             }
         });
 
@@ -508,14 +530,36 @@ public class GameActivityFragment extends Fragment {
             }
         });
 
+        //set quit button click action
+        btnQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //cancel timers
+                cancelTimer();
+
+                //create intent
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
+
+                //clear back stack
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                //start activity
+                startActivity(intent);
+
+            }
+        });
+
         //create game board layout specs
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
 
         //add layout rules
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+
+        gameLayout.setLayoutParams(layoutParams);
 
         //add board level layout to fragment layout
         fragmentLayout.addView(gameLayout, layoutParams);
@@ -548,13 +592,29 @@ public class GameActivityFragment extends Fragment {
         int pieceNum = 0;
         int margin = getResources().getDimensionPixelSize(R.dimen.game_shape_spacing);
         RelativeLayout.LayoutParams layoutParams;
-        View button;
+        GradientDrawable gradientDrawablePressed;
+        GradientDrawable gradientDrawablePressedWinner;
+        GradientDrawable gradientDrawableNotPressed;
+        StateListDrawable stateListDrawable;
+        Button button;
         ColorDrawable colorMain;
         ColorDrawable colorAccent;
         int winColor;
         int mainColor;
         int winner;
-        StateListAnimator stateListAnimator;
+
+        //Dynamic sub layout
+        RelativeLayout dynamicSub = new RelativeLayout(context);
+
+        //Dynamic sub layout params
+        RelativeLayout.LayoutParams dynamicSubLayout = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        dynamicSubLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        dynamicSubLayout.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        dynamicSub.setLayoutParams(dynamicSubLayout);
 
         //initialize random color generator
         RandomColorGenerator randomColorGenerator = new RandomColorGenerator();
@@ -616,7 +676,15 @@ public class GameActivityFragment extends Fragment {
         for(int rowCount = 0; rowCount < rows; rowCount++){
             for(int colCount = 0; colCount < rows; colCount++){
                 pieceNum = pieceNum + 1;
-                button = new View(context);
+                button = new Button(context);
+                gradientDrawableNotPressed = new GradientDrawable();
+                gradientDrawableNotPressed.setCornerRadius(12f);
+                gradientDrawablePressed = new GradientDrawable();
+                gradientDrawablePressed.setCornerRadius(12f);
+                gradientDrawablePressed.setColor(Color.RED);
+                gradientDrawablePressedWinner = new GradientDrawable();
+                gradientDrawablePressedWinner.setCornerRadius(12f);
+                gradientDrawablePressedWinner.setColor(Color.GREEN);
                 button.setMinimumHeight(0);
                 button.setMinimumWidth(0);
                 layoutParams = new RelativeLayout.LayoutParams(
@@ -635,16 +703,87 @@ public class GameActivityFragment extends Fragment {
                 button.setLayoutParams(layoutParams);
                 if(pieceNum == winner){
                     button.setOnClickListener(createClickListener());
-                    button.setBackgroundColor(winColor);
+                    gradientDrawableNotPressed.setColor(winColor);
+                    stateListDrawable = new StateListDrawable();
+                    stateListDrawable.addState(new int[] {android.R.attr.state_pressed}, gradientDrawablePressedWinner);
+                    stateListDrawable.addState(new int[] {android.R.attr.state_enabled}, gradientDrawableNotPressed);
+                    button.setBackground(stateListDrawable);
                 } else {
-                    button.setBackgroundColor(mainColor);
+                    button.setClickable(true);
+                    gradientDrawableNotPressed.setColor(mainColor);
+                    stateListDrawable = new StateListDrawable();
+                    stateListDrawable.addState(new int[] {android.R.attr.state_pressed}, gradientDrawablePressed);
+                    stateListDrawable.addState(new int[] {android.R.attr.state_enabled}, gradientDrawableNotPressed);
+                    button.setBackground(stateListDrawable);
                 }
-                gameLayout.addView(button);
-                /*Log.e("CreateBored", "Pieces=" + pieceNum
-                        + " RowCount=" + rowCount+1 + " ColCount=" + colCount+1
-                        + " Level=" + level);*/
+                dynamicSub.addView(button);
             }
         }
+        gameLayout.addView(dynamicSub);
+        return gameLayout;
+    }
+
+    private RelativeLayout creatPauseView(Context context,
+                                         RelativeLayout gameLayout) {
+
+        gameTimerRunning = false;
+        gamePaused = true;
+
+        //initialize locals
+        RelativeLayout dynamicSub;
+        RelativeLayout.LayoutParams dynamicSubLayout;
+        RelativeLayout.LayoutParams pauseLayout;
+        RelativeLayout oldGameBoard;
+
+        if(gameLayout.getChildCount() > 1){
+            oldGameBoard = (RelativeLayout) gameLayout.getChildAt(1);
+            gameLayout.removeView(oldGameBoard);
+        }
+
+        Button btnPause = (Button) gameLayout.findViewById(R.id.game_pause);
+
+        btnPause.setText("Resume");
+
+        btnPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countDown = 4;
+                gameStartTimer = new GameStartTimer(countDown*1000, 1000);
+                gameStartTimer.start();
+                gamePaused = false;
+            }
+        });
+
+        //Dynamic sub layout
+        dynamicSub = new RelativeLayout(context);
+
+        //Dynamic sub layout params
+        dynamicSubLayout = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        dynamicSubLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        dynamicSubLayout.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        dynamicSub.setLayoutParams(dynamicSubLayout);
+
+        pauseLayout = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        pauseLayout.setMargins(0,300,0,0);
+
+        //add TextView
+        TextView pauseText = new TextView(context);
+
+        pauseText.setText("Pause");
+        pauseText.setTypeface(null, Typeface.BOLD);
+        pauseText.setTextSize(50);
+        pauseText.setTextColor(Color.BLACK);
+        pauseText.setLayoutParams(pauseLayout);
+
+        dynamicSub.addView(pauseText);
+        gameLayout.addView(dynamicSub);
 
         return gameLayout;
     }

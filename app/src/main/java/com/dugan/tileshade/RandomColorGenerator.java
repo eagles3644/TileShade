@@ -2,7 +2,6 @@ package com.dugan.tileshade;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -35,12 +34,18 @@ public class RandomColorGenerator {
         int b = Color.blue(color.getColor());
         int newColor = Color.argb(alpha, r , g, b);
         ColorDrawable newColorDrawable = new ColorDrawable(newColor);
-        if(Math.abs(newColorDrawable.getAlpha()-color.getAlpha()) > 200){
-            rand = new Random(100);
-            newColor = Color.argb(color.getAlpha()+rand.nextInt(), r, g, b);
+        if(newColorDrawable.getAlpha() == color.getAlpha()){
+            int newRandOpacityIndex = rand.nextInt(arraySize);
+            opacity = gameOpacity.get(randOpacityIndex);
+            while (newRandOpacityIndex == randOpacityIndex){
+                newRandOpacityIndex = rand.nextInt(arraySize);
+                opacity = gameOpacity.get(randOpacityIndex);
+            }
+            alpha = Math.round((float)color.getAlpha()*opacity);
+            newColor = Color.argb(alpha, r, g, b);
             newColorDrawable = new ColorDrawable(newColor);
         }
-        Log.e("Opacity", "" + opacity + " Alpha: " + newColorDrawable.getAlpha());
+        //Log.e("Opacity", "" + opacity + " Alpha: " + newColorDrawable.getAlpha());
         return newColorDrawable;
     }
 
